@@ -22,6 +22,7 @@
 #ifndef KDLCHAINIKSOLVERPOS_NR_HPP
 #define KDLCHAINIKSOLVERPOS_NR_HPP
 
+#include <functional>
 #include "chainiksolver.hpp"
 #include "chainfksolver.hpp"
 
@@ -60,6 +61,13 @@ namespace KDL {
         ~ChainIkSolverPos_NR();
 
         /**
+        * Use a special function to compute the difference between the desired pose )i.e. Frame)
+        * of the end effector and the desired one passed as second argument of CartToJnt.
+        */
+        void setDifferenceFunction( std::function<Twist(const Frame&,const Frame&)> difference);
+
+
+        /**
          * Find an output joint pose \a q_out, given a starting joint pose
          * \a q_init and a desired cartesian pose \a p_in
          *
@@ -85,6 +93,8 @@ namespace KDL {
 
         unsigned int maxiter;
         double eps;
+
+        std::function<Twist(const Frame&,const Frame&)> frame_diff;
     };
 
 }

@@ -20,7 +20,7 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "chainiksolverpos_nr.hpp"
-
+#include <functional>
 namespace KDL
 {
     ChainIkSolverPos_NR::ChainIkSolverPos_NR(const Chain& _chain,ChainFkSolverPos& _fksolver,ChainIkSolverVel& _iksolver,
@@ -37,7 +37,12 @@ namespace KDL
             unsigned int i;
             for(i=0;i<maxiter;i++){
                 fksolver.JntToCart(q_out,f);
-                delta_twist = diff(f,p_in);
+
+                if( frame_diff )
+                    delta_twist = frame_diff(f,p_in);
+                else
+                    delta_twist = KDL::diff(f,p_in);
+
                 const int rc = iksolver.CartToJnt(q_out,delta_twist,delta_q);
                 if (E_NOERROR > rc)
                     return (error = E_IKSOLVER_FAILED);
@@ -53,6 +58,11 @@ namespace KDL
 
     ChainIkSolverPos_NR::~ChainIkSolverPos_NR()
     {
+    }
+
+    void ChainIkSolverPos_NR::setDifferenceFunction(std::function<Twist (const Frame &, const Frame &)> difference)
+    {
+        frame_diff = difference;
     }
 
     const char* ChainIkSolverPos_NR::strError(const int error) const
