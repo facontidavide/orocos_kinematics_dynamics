@@ -9,14 +9,14 @@ using namespace KDL;
 class FrameDiffTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE( FrameDiffTest);
-    CPPUNIT_TEST( SimpleTest );
+    CPPUNIT_TEST( SimpleAxisTest );
     CPPUNIT_TEST_SUITE_END();
 
 public:
     void setUp();
     void tearDown();
 
-    void SimpleTest();
+    void SimpleAxisTest();
 
 };
 

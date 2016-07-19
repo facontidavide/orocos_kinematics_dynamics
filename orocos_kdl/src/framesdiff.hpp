@@ -27,6 +27,7 @@
 #define KDL_FRAMESDIFF_H
 
 #include <frames.hpp>
+#include <Eigen/Core>
 
 namespace KDL{
 
@@ -34,8 +35,8 @@ namespace KDL{
  * This funtion is meant rotation difference between two frames,
  * but ignoring the component parallel to a specified axis.
  *
- * @param Fa  first rotation
- * @param Fb  second frame
+ * @param Ra  first rotation
+ * @param Rb  second rotation
  * @param neutral_rot_axis  this is the vector used to "neutralize" the errors parallel to the axis.
  * @return difference vector.
  */
@@ -45,22 +46,32 @@ IMETHOD Vector diff_2DoF(const Rotation& Ra,const Rotation& Rb, const Vector& ne
     // rotation from the frame A to frame B
     Rotation R_a_b    = Ra.Inverse()*Rb;
 
-    // extract the rotation axis as it is seen from the point of view of Fa
+    // extract the rotation axis as it is seen from the point of view of Ra
     Vector rot_axis;
     double angle = R_a_b.GetRotAngle(rot_axis);
 
     // project rot_axis onto neutral_rot_axis and subtract the result from rot_axis itself
     // in this way the perpendicular components will be maintained.
     Vector proj_axis = neutral_rot_axis * dot( neutral_rot_axis, rot_axis);
-    rot_axis -= proj_axis;
 
-    return Ra * ( rot_axis * angle );
+    return Ra * ( (rot_axis - proj_axis) * angle );
 }
 
 
-IMETHOD Twist diff_5DoF(const Frame& Fa,const Frame& Fb, const Vector& neutral_rot_axis )
+/**
+ * This funtion is meant rotation and position difference between two frames,
+ * but ignoring the rotation part that is parallel to a specified axis.
+ *
+ * @param Fa  first frame
+ * @param Fb  second frame
+ * @param neutral_rot_axis  this is the vector used to "neutralize" the errors parallel to the axis.
+ * @return difference represented as a 6 dimensional vector. We use a Twist, even if technically it is not a twist.
+ */
+
+IMETHOD Twist diff_5DoF(const Frame& Fa,const Frame& Fb,
+                        const Vector& neutral_rot_axis)
 {
-    return Twist( (Fa.p - Fb.p),
+    return Twist ( (Fa.p - Fb.p),
                   diff_2DoF( Fa.M, Fb.M, neutral_rot_axis) );
 }
 
