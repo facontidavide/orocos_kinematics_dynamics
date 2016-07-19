@@ -91,6 +91,8 @@ ENDIF(ENABLE_TESTS )
 
 OPTION(ENABLE_EXAMPLES OFF "Enable building of examples")
 
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 "  )
+
 ADD_SUBDIRECTORY( doc )
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( tests )

@@ -17,6 +17,13 @@ IF(ENABLE_TESTS)
   COMPILE_FLAGS "${CMAKE_CXX_FLAGS_ADD} ${KDL_CFLAGS}")
  ADD_TEST(kinfamtest kinfamtest)
 
+  ADD_EXECUTABLE(framediff_test framediff_test.cpp test-runner.cpp)
+ TARGET_LINK_LIBRARIES(framediff_test orocos-kdl ${CPPUNIT})
+ SET(TESTNAME "framediff_test")
+ SET_TARGET_PROPERTIES( framediff_test PROPERTIES
+  COMPILE_FLAGS "${CMAKE_CXX_FLAGS_ADD} ${KDL_CFLAGS}")
+ ADD_TEST(framediff_test framediff_test)
+
  ADD_EXECUTABLE(solvertest solvertest.cpp test-runner.cpp)
  TARGET_LINK_LIBRARIES(solvertest orocos-kdl ${CPPUNIT})
  SET(TESTNAME "solvertest")
